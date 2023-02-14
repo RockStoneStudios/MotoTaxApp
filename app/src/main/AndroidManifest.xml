@@ -17,9 +17,6 @@
         android:theme="@style/Theme.MotoTaxApp"
         tools:targetApi="31">
         <activity
-            android:name=".activities.TripInfoActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.MapActivity"
             android:exported="false" />
         <activity
@@ -34,10 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC8Z5spLC6rTVYkQ4vkc8uOzM9nqEbmFCo" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC8Z5spLC6rTVYkQ4vkc8uOzM9nqEbmFCo"/>
     </application>
 
 </manifest>
