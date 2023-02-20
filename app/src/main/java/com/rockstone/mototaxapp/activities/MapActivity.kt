@@ -42,6 +42,7 @@ import com.rockstone.mototaxapp.R
 import com.rockstone.mototaxapp.databinding.ActivityMapBinding
 import com.rockstone.mototaxapp.models.DriverLocation
 import com.rockstone.mototaxapp.providers.AuthProvider
+import com.rockstone.mototaxapp.providers.BookingProvider
 import com.rockstone.mototaxapp.providers.GeoProvider
 import com.rockstone.mototaxapp.utils.CarMoveAnim
 import org.imperiumlabs.geofirestore.callbacks.GeoQueryEventListener
@@ -54,7 +55,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,Listener {
 
     private val geoProvider = GeoProvider()
     private val authProvider = AuthProvider()
-
+    private val bookingProvider = BookingProvider()
     //Google Places
     private var places:PlacesClient?=null
     private var autocompleteOrigin:AutocompleteSupportFragment?=null
@@ -87,6 +88,7 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,Listener {
             Manifest.permission.ACCESS_COARSE_LOCATION
         ))
         startGooglePlaces()
+        removeBooking()
         binding.btnRequestTrip.setOnClickListener { goToTripInfo() }
 
     }
@@ -111,6 +113,9 @@ class MapActivity : AppCompatActivity(),OnMapReadyCallback,Listener {
         }
     }
 
+    private fun removeBooking(){
+        bookingProvider?.remove()
+    }
 
     private fun getPositionDriver(id:String):Int{
        var position =0

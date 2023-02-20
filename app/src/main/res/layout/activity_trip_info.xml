@@ -51,8 +51,8 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="Calle falsa"
-                   android:maxLines="2"
-                   android:textSize="14sp"
+                   android:maxLines="1"
+                   android:textSize="13sp"
                />
            </LinearLayout>
        </LinearLayout>
@@ -154,14 +154,14 @@
                  <TextView
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="Precio"
+                     android:text="Precio Aprox"
                      android:textSize="13sp"
                      android:textStyle="bold"/>
                  <TextView
                      android:id="@+id/textViewPrice"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
-                     android:text="6500"
+                     android:text="$0"
                      android:maxLines="2"
                      android:textSize="14sp"
                      />

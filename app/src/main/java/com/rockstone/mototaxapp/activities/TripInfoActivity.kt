@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import com.example.easywaylocation.EasyWayLocation
 import com.example.easywaylocation.Listener
 import com.example.easywaylocation.draw_path.DirectionUtil
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.rockstone.mototaxapp.R
 import com.rockstone.mototaxapp.databinding.ActivityTripInfoBinding
+import com.rockstone.mototaxapp.models.Prices
+import com.rockstone.mototaxapp.providers.ConfigProvider
 
 class TripInfoActivity : AppCompatActivity(),OnMapReadyCallback,Listener,DirectionUtil.DirectionCallBack {
    private lateinit var binding:ActivityTripInfoBinding
@@ -41,7 +44,12 @@ class TripInfoActivity : AppCompatActivity(),OnMapReadyCallback,Listener,Directi
 
     private var markerOrigin : Marker?=null
     private var markerDestination : Marker?= null
+    private val valorDolar = 4820;
 
+    var distance=0.0
+    var time =0.0
+
+     private var configProvider = ConfigProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,9 +89,53 @@ class TripInfoActivity : AppCompatActivity(),OnMapReadyCallback,Listener,Directi
         Log.d("Localizacion", "destination lng : ${destinationLatLng?.longitude}")
 
         binding.btnViewBack.setOnClickListener { finish() }
+        binding.btnConfirmRequest.setOnClickListener { goToSearchDriver() }
     }
 
+    private fun goToSearchDriver() {
 
+        if (originLatLng != null && destinationLatLng != null) {
+            val i = Intent(this, SearchActivity::class.java)
+            i.putExtra("origin", extraOriginName)
+            i.putExtra("destination", extraDestinationName)
+            i.putExtra("origin_lat", originLatLng?.latitude)
+            i.putExtra("origin_lng", originLatLng?.longitude)
+            i.putExtra("destination_lat", destinationLatLng?.latitude)
+            i.putExtra("destination_lng", destinationLatLng?.longitude)
+            i.putExtra("time",time)
+            i.putExtra("distance",distance)
+            startActivity(i)
+        }
+        else {
+            Toast.makeText(this, "Debes seleccionar el origin y el destino", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+   private fun getPrices(distance:Double,time:Double){
+       configProvider.getPrices().addOnSuccessListener { document ->
+           if(document.exists()){
+               val prices = document.toObject(Prices::class.java)
+
+               val totalDistance = distance * prices?.km!! //Valor por Km
+               val totalTime = time*prices?.min!! // Valor por Min
+
+               var total = totalDistance + totalTime //Total
+               total = if(total< 4500) prices?.minValue!! else total
+
+               var minTotal = (total -prices?.difference!!)// total - 0.2
+               var maxTotal = (total + prices?.difference!!)// total +0.2
+
+               val minTotalString = String.format("%.1f",minTotal)
+               val maxTotalString = String.format("%.1f",maxTotal)
+
+               Log.d("distance", "$minTotalString")
+               Log.d("distance", "$maxTotalString")
+
+              binding.textViewPrice.text= "$ $minTotalString  - $ $maxTotalString"
+           }
+       }
+   }
 
     private fun addOriginMarker() {
         markerOrigin = googleMap?.addMarker(MarkerOptions().position(originLatLng!!).title("Mi posicion")
@@ -98,13 +150,14 @@ class TripInfoActivity : AppCompatActivity(),OnMapReadyCallback,Listener,Directi
 
     private fun easyDrawRoute() {
         wayPoints.add(originLatLng!!)
-        wayPoints.add(originLatLng!!)
+        wayPoints.add(destinationLatLng!!)
         directionUtil = DirectionUtil.Builder()
             .setDirectionKey(resources.getString(R.string.google_maps_key))
             .setOrigin(originLatLng!!)
             .setWayPoints(wayPoints)
             .setGoogleMap(googleMap!!)
-            .setPolyLineWidth(10)
+            .setPolyLineWidth(20)
+            .setPolyLinePrimaryColor(R.color.purple_500)
             .setPathAnimation(true)
             .setCallback(this)
             .setDestination(destinationLatLng!!)
@@ -160,15 +213,17 @@ class TripInfoActivity : AppCompatActivity(),OnMapReadyCallback,Listener,Directi
         polyLineDetailsMap: HashMap<String, PolyLineDataBean>,
         polyLineDetailsArray: ArrayList<PolyLineDataBean>
     ) {
-        var distance = polyLineDetailsArray[1].distance.toDouble()
-        var time = polyLineDetailsArray[1].time.toDouble()
+        distance = polyLineDetailsArray[1].distance.toDouble()
+        time = polyLineDetailsArray[1].time.toDouble()
         distance = if(distance <1000.0) 1000.0 else distance
         time = if(time< 60.0) 60.0 else time
 
-
+         distance /=1000.0
+         time /= 60.0
         val timeString = String.format("%.2f",time)
         val distanceString = String.format("%.2f",distance)
 
+        getPrices(distance,time)
         binding.textViewTimeAndDistance.text = "$timeString mins - $distanceString km"
 
 
