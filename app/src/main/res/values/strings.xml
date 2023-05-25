@@ -3,4 +3,5 @@
 
     <string name="app_name">Moto Tax App </string>
     <string name="google_maps_key">AIzaSyC8Z5spLC6rTVYkQ4vkc8uOzM9nqEbmFCo</string>
+    <string name="default_notification_channel_id">fcm_default_channel</string>
 </resources>

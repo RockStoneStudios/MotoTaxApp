@@ -30,7 +30,7 @@
          <ImageView
              android:layout_width="25dp"
              android:layout_height="25dp"
-             android:src="@drawable/ic_location"
+             android:src="@drawable/icons_location_person"
              android:layout_marginLeft="30dp"
              android:layout_marginRight="30dp"
              android:layout_marginTop="5dp"
@@ -67,7 +67,7 @@
              <ImageView
                  android:layout_width="25dp"
                  android:layout_height="25dp"
-                 android:src="@drawable/ic_mylocation"
+                 android:src="@drawable/icons_location_person"
                  android:layout_marginLeft="30dp"
                  android:layout_marginRight="30dp"
                  android:layout_marginTop="5dp"
@@ -104,7 +104,7 @@
              <ImageView
                  android:layout_width="25dp"
                  android:layout_height="25dp"
-                 android:src="@drawable/ic_timer"
+                 android:src="@drawable/ic_timer_grey"
                  android:layout_marginLeft="30dp"
                  android:layout_marginRight="30dp"
                  android:layout_marginTop="5dp"
