@@ -155,7 +155,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
         if (myLocationLatLng == null) return
 
-        geoProvider.getNearbyDrivers(myLocationLatLng!!, 30.0).addGeoQueryEventListener(object: GeoQueryEventListener {
+        geoProvider.getNearbyDrivers(myLocationLatLng!!, 6.0).addGeoQueryEventListener(object: GeoQueryEventListener {
 
             override fun onKeyEntered(documentID: String, location: GeoPoint) {
 
@@ -169,11 +169,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
                         }
                     }
                 }
+
                 // CREAMOS UN NUEVO MARCADOR PARA EL CONDUCTOR CONECTADO
                 val driverLatLng = LatLng(location.latitude, location.longitude)
                 val marker = googleMap?.addMarker(
+
                     MarkerOptions().position(driverLatLng).title("Conductor disponible").icon(
-                        BitmapDescriptorFactory.fromResource(R.drawable.uber_car)
+                        BitmapDescriptorFactory.fromResource(R.drawable.mototax)
                     )
                 )
 
@@ -356,7 +358,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             }
 
             override fun onError(p0: Status) {
-                TODO("Not yet implemented")
+
             }
         })
     }

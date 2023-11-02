@@ -258,7 +258,7 @@ class MapTripActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Direc
 
     private fun addDriverMarker(position: LatLng) {
         markerDriver = googleMap?.addMarker(MarkerOptions().position(position).title("Tu conductor")
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.uber_car)))
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mototax)))
     }
 
     private fun addDestinationMarker() {

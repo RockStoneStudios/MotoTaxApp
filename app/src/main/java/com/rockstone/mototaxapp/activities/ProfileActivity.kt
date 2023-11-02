@@ -70,7 +70,7 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
         else {
-            clientProvider.update(client).addOnCompleteListener {
+            clientProvider.update(client)?.addOnCompleteListener {
                 if (it.isSuccessful) {
                     Toast.makeText(this@ProfileActivity, "Datos actualizados correctamente", Toast.LENGTH_LONG).show()
                 }

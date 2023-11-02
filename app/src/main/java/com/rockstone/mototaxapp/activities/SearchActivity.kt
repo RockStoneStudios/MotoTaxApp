@@ -13,10 +13,14 @@ import com.google.firebase.firestore.ktx.toObject
 import com.rockstone.mototaxapp.R
 import com.rockstone.mototaxapp.databinding.ActivitySearchBinding
 import com.rockstone.mototaxapp.models.Booking
-import com.rockstone.mototaxapp.providers.AuthProvider
-import com.rockstone.mototaxapp.providers.BookingProvider
-import com.rockstone.mototaxapp.providers.GeoProvider
+import com.rockstone.mototaxapp.models.Driver
+import com.rockstone.mototaxapp.models.FCMBody
+import com.rockstone.mototaxapp.models.FCMResponse
+import com.rockstone.mototaxapp.providers.*
 import org.imperiumlabs.geofirestore.callbacks.GeoQueryEventListener
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
@@ -33,13 +37,15 @@ class SearchActivity : AppCompatActivity() {
     private var extraDistance=0.0
     private val geoProvider = GeoProvider()
     private val authProvider = AuthProvider()
-
+    private val notificationProvider = NotificationProvider()
+    private val driverProvider = DriverProvider()
 
     private var originLatLng:LatLng?= null
     private var destinationLatLng:LatLng?=null
 
     private var radius = 0.1
     private var limitRadius = 2.0
+    private var driver: Driver? = null
     private var idDriver = ""
     private var isDriverFound = false
     private var driverLatLng:LatLng?=null
@@ -68,6 +74,45 @@ class SearchActivity : AppCompatActivity() {
         checkIfDriverAccept()
     }
 
+    private fun sendNotification() {
+
+        val map = HashMap<String, String>()
+        map.put("title", "SOLICITUD DE VIAJE")
+        map.put("body", "UN CLIENTE ESTA SOLICITANDO UN VIAJE a" +
+                " ${String.format("%.1f",extraDistance)}Km y ${String.format("%.2f",extraTime)} min")
+
+        map.put("idBooking",authProvider.getId())
+        val body = FCMBody(
+            to = driver?.token!!,
+            priority = "high",
+            ttl = "4500s",
+            data = map
+        )
+
+
+        notificationProvider.sendNotification(body).enqueue(object: Callback<FCMResponse> {
+            override fun onResponse(call: Call<FCMResponse>, response: Response<FCMResponse>) {
+                if (response.body() != null) {
+
+                    if (response.body()!!.success == 1) {
+                        Toast.makeText(this@SearchActivity, "Se envio la notificacion", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        Toast.makeText(this@SearchActivity, "No se pudo enviar la notificacion", Toast.LENGTH_LONG).show()
+                    }
+
+                }
+                else {
+                    Toast.makeText(this@SearchActivity, "hubo un error enviando la notificacion", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<FCMResponse>, t: Throwable) {
+                Log.d("NOTIFICATION", "ERROR: ${t.message}")
+            }
+
+        })
+    }
     private fun checkIfDriverAccept(){
         listenerBooking= bookingProvider.getBooking().addSnapshotListener { snapshot, e ->
          if(e!=null){
@@ -88,6 +133,15 @@ class SearchActivity : AppCompatActivity() {
              }
 
          }
+    }
+
+    private fun getDriverInfo() {
+     driverProvider.getDriver(idDriver).addOnSuccessListener { document ->
+         if(document.exists()){
+             driver = document.toObject(Driver::class.java)
+             sendNotification()
+         }
+     }
     }
      private fun goToMapTrip(){
          val i = Intent(this,MapTripActivity::class.java)
@@ -130,6 +184,7 @@ class SearchActivity : AppCompatActivity() {
                      if (!isDriverFound) {
                          isDriverFound = true
                          idDriver = documentID
+                         getDriverInfo()
                          driverLatLng = LatLng(location.latitude, location.longitude)
                          binding.textViewSearch.text =
                              "CONDUCTOR ENCONTRADO\n ESPERANDO RESPUESTA DEL CONDUCTOR"

@@ -14,8 +14,8 @@ import com.rockstone.mototaxapp.R
 
 class NotificationHelper(base: Context): ContextWrapper(base) {
 
-    private val CHANNEL_ID = "com.optic.uberclonekotlin"
-    private val CHANNEL_NAME = "Uber Clone Kotlin"
+    private val CHANNEL_ID = "com.rockstone.mototaxapp"
+    private val CHANNEL_NAME = "Moto Tax App"
     private var manager: NotificationManager? = null
 
     init {

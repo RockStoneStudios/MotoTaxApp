@@ -100,7 +100,7 @@
             android:layout_marginTop="5dp"
             style="@style/EditTextGrey"
             app:hintTextColor="@color/grey_dark"
-            app:startIconDrawable="@drawable/ic_little_person_outline"
+            app:startIconDrawable="@drawable/ic_person_little_outline"
             app:startIconTint="@color/grey_dark">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -124,7 +124,7 @@
             android:layout_marginTop="5dp"
             style="@style/EditTextGrey"
             app:hintTextColor="@color/grey_dark"
-            app:startIconDrawable="@drawable/ic_phone_white"
+            app:startIconDrawable="@drawable/ic_phone"
             app:startIconTint="@color/grey_dark">
 
             <com.google.android.material.textfield.TextInputEditText
